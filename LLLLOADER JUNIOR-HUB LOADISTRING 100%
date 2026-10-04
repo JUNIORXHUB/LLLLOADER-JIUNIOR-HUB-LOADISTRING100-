@@ -1,0 +1,384 @@
+-- JUNIORX-HUB System Elite Custom Edition
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+-- 1. PAUSA INICIAL DE COMPILACIÓN (Simula que el ejecutor está procesando el script)
+task.wait(1.5)
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "JUNIORXHUB_ELITE_CUSTOM"
+ScreenGui.Parent = game:GetService("CoreGui") or Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- PANTALLA DE BLOQUEO (KEY SYSTEM)
+local FullScreen = Instance.new("Frame")
+FullScreen.Name = "FullScreen"
+FullScreen.Parent = ScreenGui
+FullScreen.BackgroundColor3 = Color3.fromRGB(8, 4, 16)
+FullScreen.BackgroundTransparency = 0.15
+FullScreen.Size = UDim2.new(1, 0, 1, 0)
+FullScreen.ZIndex = 100
+
+-- PARTÍCULAS DE FONDO
+local Particles = {}
+for i = 1, 30 do
+    local p = Instance.new("Frame")
+    p.BackgroundColor3 = i % 2 == 0 and Color3.fromRGB(160, 50, 255) or Color3.fromRGB(240, 230, 255)
+    p.BackgroundTransparency = 0.5
+    p.BorderSizePixel = 0
+    p.Size = UDim2.new(0, math.random(3, 6), 0, math.random(3, 6))
+    p.Position = UDim2.new(math.random(), 0, math.random(), 0)
+    p.Parent = FullScreen
+    p.ZIndex = 101
+
+    local pCorner = Instance.new("UICorner")
+    pCorner.CornerRadius = UDim.new(1, 0)
+    pCorner.Parent = p
+
+    table.insert(Particles, {
+        Frame = p,
+        Vx = (math.random() - 0.5) * 0.005,
+        Vy = (math.random() - 0.5) * 0.005
+    })
+end
+
+local particleConnection
+particleConnection = RunService.RenderStepped:Connect(function()
+    if not FullScreen or not FullScreen.Parent then
+        if particleConnection then particleConnection:Disconnect() end
+        return
+    end
+    for _, d in ipairs(Particles) do
+        local nx = d.Frame.Position.X.Scale + d.Vx
+        local ny = d.Frame.Position.Y.Scale + d.Vy
+        if nx < 0 or nx > 1 then d.Vx = -d.Vx end
+        if ny < 0 or ny > 1 then d.Vy = -d.Vy end
+        d.Frame.Position = UDim2.new(nx, 0, ny, 0)
+    end
+end)
+
+-- PANEL DE LOGIN
+local LoginFrame = Instance.new("Frame")
+LoginFrame.BackgroundColor3 = Color3.fromRGB(16, 8, 30)
+LoginFrame.BorderSizePixel = 0
+LoginFrame.Position = UDim2.new(0.5, -180, 0.5, -140)
+LoginFrame.Size = UDim2.new(0, 360, 0, 280)
+LoginFrame.Parent = FullScreen
+LoginFrame.ZIndex = 102
+
+local LoginCorner = Instance.new("UICorner")
+LoginCorner.CornerRadius = UDim.new(0, 14)
+LoginCorner.Parent = LoginFrame
+
+local LoginStroke = Instance.new("UIStroke")
+LoginStroke.Color = Color3.fromRGB(160, 60, 255)
+LoginStroke.Thickness = 2.5
+LoginStroke.Parent = LoginFrame
+
+-- TAG SUPERIOR
+local TagLabel = Instance.new("TextLabel")
+TagLabel.Size = UDim2.new(1, 0, 0, 25)
+TagLabel.Position = UDim2.new(0, 0, 0, 8)
+TagLabel.BackgroundTransparency = 1
+TagLabel.Font = Enum.Font.FredokaOne
+TagLabel.Text = "🔴 KEY SYSTEM"
+TagLabel.TextColor3 = Color3.fromRGB(240, 70, 70)
+TagLabel.TextSize = 12
+TagLabel.Parent = LoginFrame
+
+-- TÍTULO PRINCIPAL
+local WelcomeLabel = Instance.new("TextLabel")
+WelcomeLabel.Size = UDim2.new(1, -20, 0, 48)
+WelcomeLabel.Position = UDim2.new(0, 10, 0, 28)
+WelcomeLabel.BackgroundTransparency = 1
+WelcomeLabel.Font = Enum.Font.SpecialElite
+WelcomeLabel.RichText = true
+WelcomeLabel.Text = 'Bienvenido a,<br/><font color="#d896ff">JUNIORX-HUB</font>'
+WelcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WelcomeLabel.TextSize = 20
+WelcomeLabel.Parent = LoginFrame
+
+local TitleStroke = Instance.new("UIStroke")
+TitleStroke.Color = Color3.fromRGB(120, 20, 200)
+TitleStroke.Thickness = 1.2
+TitleStroke.Parent = WelcomeLabel
+
+-- CONTENEDOR INPUT + BOTÓN ENTREGAR
+local InputContainer = Instance.new("Frame")
+InputContainer.Size = UDim2.new(0.88, 0, 0, 42)
+InputContainer.Position = UDim2.new(0.06, 0, 0, 95)
+InputContainer.BackgroundTransparency = 1
+InputContainer.Parent = LoginFrame
+
+local DeliverBtn = Instance.new("TextButton")
+DeliverBtn.Name = "DeliverBtn"
+DeliverBtn.Size = UDim2.new(0.3, 0, 1, 0)
+DeliverBtn.Position = UDim2.new(0, 0, 0, 0)
+DeliverBtn.BackgroundColor3 = Color3.fromRGB(130, 40, 220)
+DeliverBtn.Font = Enum.Font.GothamBold
+DeliverBtn.Text = "Entregar"
+DeliverBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DeliverBtn.TextSize = 13
+DeliverBtn.Parent = InputContainer
+
+local DeliverCorner = Instance.new("UICorner")
+DeliverCorner.CornerRadius = UDim.new(0, 8)
+DeliverCorner.Parent = DeliverBtn
+
+local DeliverStroke = Instance.new("UIStroke")
+DeliverStroke.Color = Color3.fromRGB(180, 80, 255)
+DeliverStroke.Thickness = 1.5
+DeliverStroke.Parent = DeliverBtn
+
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(0.66, 0, 1, 0)
+KeyBox.Position = UDim2.new(0.34, 0, 0, 0)
+KeyBox.BackgroundColor3 = Color3.fromRGB(25, 12, 45)
+KeyBox.Font = Enum.Font.GothamBold
+KeyBox.PlaceholderText = "Cargando..."
+KeyBox.Text = ""
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBox.PlaceholderColor3 = Color3.fromRGB(150, 130, 180)
+KeyBox.TextSize = 13
+KeyBox.ClearTextOnFocus = false
+KeyBox.Parent = InputContainer
+
+local KeyBoxCorner = Instance.new("UICorner")
+KeyBoxCorner.CornerRadius = UDim.new(0, 8)
+KeyBoxCorner.Parent = KeyBox
+
+local KeyBoxStroke = Instance.new("UIStroke")
+KeyBoxStroke.Color = Color3.fromRGB(110, 45, 180)
+KeyBoxStroke.Thickness = 1.2
+KeyBoxStroke.Parent = KeyBox
+
+-- BOTÓN SYSTEM KEY
+local SystemKeyBanner = Instance.new("Frame")
+SystemKeyBanner.Size = UDim2.new(0.88, 0, 0, 42)
+SystemKeyBanner.Position = UDim2.new(0.06, 0, 0, 150)
+SystemKeyBanner.BackgroundColor3 = Color3.fromRGB(110, 35, 190)
+SystemKeyBanner.Parent = LoginFrame
+
+local BannerCorner = Instance.new("UICorner")
+BannerCorner.CornerRadius = UDim.new(0, 8)
+BannerCorner.Parent = SystemKeyBanner
+
+local BannerText = Instance.new("TextLabel")
+BannerText.Size = UDim2.new(1, 0, 1, 0)
+BannerText.BackgroundTransparency = 1
+BannerText.Font = Enum.Font.GothamBold
+BannerText.Text = "Iniciando System Key..."
+BannerText.TextColor3 = Color3.fromRGB(255, 255, 255)
+BannerText.TextSize = 14
+BannerText.Parent = SystemKeyBanner
+
+-- TEXTO INFERIOR
+local FooterLabel = Instance.new("TextLabel")
+FooterLabel.Size = UDim2.new(1, 0, 0, 30)
+FooterLabel.Position = UDim2.new(0, 0, 0, 210)
+FooterLabel.BackgroundTransparency = 1
+FooterLabel.Font = Enum.Font.GothamMedium
+FooterLabel.Text = "Script Nueva version scripts"
+FooterLabel.TextColor3 = Color3.fromRGB(190, 170, 220)
+FooterLabel.TextSize = 12
+FooterLabel.Parent = LoginFrame
+
+-- DESACTIVAR ELEMENTOS TEMPORALMENTE MIENTRAS "CARGA"
+DeliverBtn.Active = false
+DeliverBtn.AutoButtonColor = false
+KeyBox.TextEditable = false
+
+-- ANIMACIÓN SIMULADA DE CARGA / CONGELAMIENTO
+task.spawn(function()
+    task.wait(0.8)
+    BannerText.Text = "Conectando al Servidor..."
+    task.wait(1.2)
+    BannerText.Text = "System Key 🔑"
+    KeyBox.PlaceholderText = "Ingresar Key aquí..."
+    
+    -- REACTIVAR BOTONES
+    DeliverBtn.Active = true
+    DeliverBtn.AutoButtonColor = true
+    KeyBox.TextEditable = true
+end)
+
+-- VENTANA PRINCIPAL DE SCRIPTS (MAIN HUB)
+local MainWin = Instance.new("Frame")
+MainWin.Name = "MainWin"
+MainWin.BackgroundColor3 = Color3.fromRGB(16, 8, 30)
+MainWin.Position = UDim2.new(0.05, 0, 0.1, 0)
+MainWin.Size = UDim2.new(0, 320, 0, 280)
+MainWin.Active = true
+MainWin.Draggable = true
+MainWin.Visible = false
+MainWin.Parent = ScreenGui
+MainWin.ZIndex = 50
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainWin
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(160, 60, 255)
+MainStroke.Thickness = 2
+MainStroke.Parent = MainWin
+
+local WinTop = Instance.new("Frame")
+WinTop.BackgroundColor3 = Color3.fromRGB(28, 12, 52)
+WinTop.Size = UDim2.new(1, 0, 0, 42)
+WinTop.Parent = MainWin
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 12)
+TopCorner.Parent = WinTop
+
+local WinTitle = Instance.new("TextLabel")
+WinTitle.BackgroundTransparency = 1
+WinTitle.Position = UDim2.new(0, 14, 0, 0)
+WinTitle.Size = UDim2.new(1, -50, 1, 0)
+WinTitle.Font = Enum.Font.GothamBold
+WinTitle.RichText = true
+WinTitle.Text = 'JUNIORX <font color="#d896ff">HUB V3</font>'
+WinTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+WinTitle.TextSize = 15
+WinTitle.TextXAlignment = Enum.TextXAlignment.Left
+WinTitle.Parent = WinTop
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.Position = UDim2.new(1, -34, 0.5, -12)
+CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.Text = "-"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 18
+CloseBtn.Parent = WinTop
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseBtn
+
+-- BOTONES DE SCRIPTS
+local MirandaBtn = Instance.new("TextButton")
+MirandaBtn.BackgroundColor3 = Color3.fromRGB(100, 30, 190)
+MirandaBtn.Position = UDim2.new(0, 15, 0, 60)
+MirandaBtn.Size = UDim2.new(1, -30, 0, 50)
+MirandaBtn.Font = Enum.Font.GothamBold
+MirandaBtn.Text = "Miranda Hub"
+MirandaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MirandaBtn.TextSize = 14
+MirandaBtn.Parent = MainWin
+
+local MirandaCorner = Instance.new("UICorner")
+MirandaCorner.CornerRadius = UDim.new(0, 8)
+MirandaCorner.Parent = MirandaBtn
+
+local LennonBtn = Instance.new("TextButton")
+LennonBtn.BackgroundColor3 = Color3.fromRGB(130, 45, 225)
+LennonBtn.Position = UDim2.new(0, 15, 0, 125)
+LennonBtn.Size = UDim2.new(1, -30, 0, 50)
+LennonBtn.Font = Enum.Font.GothamBold
+LennonBtn.Text = "Lennon Hub v4 ⚡"
+LennonBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LennonBtn.TextSize = 14
+LennonBtn.Parent = MainWin
+
+local LennonCorner = Instance.new("UICorner")
+LennonCorner.CornerRadius = UDim.new(0, 8)
+LennonCorner.Parent = LennonBtn
+
+local Status = Instance.new("TextLabel")
+Status.BackgroundTransparency = 1
+Status.Position = UDim2.new(0, 15, 0, 195)
+Status.Size = UDim2.new(1, -30, 0, 25)
+Status.Font = Enum.Font.GothamMedium
+Status.RichText = true
+Status.Text = 'Estado: <font color="#a0a0a0">Esperando selección</font>'
+Status.TextColor3 = Color3.fromRGB(200, 200, 200)
+Status.TextSize = 12
+Status.Parent = MainWin
+
+-- BOTÓN CIRCULAR FLOTANTE
+local CircleBtn = Instance.new("TextButton")
+CircleBtn.Name = "OpenCircle"
+CircleBtn.BackgroundColor3 = Color3.fromRGB(20, 10, 35)
+CircleBtn.Position = UDim2.new(0.02, 0, 0.4, 0)
+CircleBtn.Size = UDim2.new(0, 52, 0, 52)
+CircleBtn.Font = Enum.Font.GothamBold
+CircleBtn.RichText = true
+CircleBtn.Text = '<font color="#d896ff">JX</font>'
+CircleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CircleBtn.TextSize = 18
+CircleBtn.Active = true
+CircleBtn.Draggable = true
+CircleBtn.Visible = false
+CircleBtn.Parent = ScreenGui
+CircleBtn.ZIndex = 200
+
+local CircleCorner = Instance.new("UICorner")
+CircleCorner.CornerRadius = UDim.new(1, 0)
+CircleCorner.Parent = CircleBtn
+
+local CircleStroke = Instance.new("UIStroke")
+CircleStroke.Color = Color3.fromRGB(170, 70, 255)
+CircleStroke.Thickness = 2.5
+CircleStroke.Parent = CircleBtn
+
+-- LÓGICA DE VALIDACIÓN DE KEY (CLAVE: juniorxEgg)
+local PASS = "juniorxEgg"
+
+DeliverBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text == PASS then
+        if particleConnection then particleConnection:Disconnect() end
+        FullScreen:Destroy()
+        MainWin.Visible = true
+    else
+        KeyBox.Text = ""
+        KeyBox.PlaceholderText = "Clave Incorrecta ❌"
+    end
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    MainWin.Visible = false
+    CircleBtn.Visible = true
+end)
+
+CircleBtn.MouseButton1Click:Connect(function()
+    MainWin.Visible = true
+    CircleBtn.Visible = false
+end)
+
+-- EJECUTOR DE SCRIPTS PROTEGIDO
+local function LoadScript(url, name)
+    Status.Text = 'Estado: <font color="#d896ff">Cargando ' .. name .. '...</font>'
+    task.spawn(function()
+        local ok, rawContent = pcall(function()
+            return game:HttpGet(url, true)
+        end)
+        
+        if ok and rawContent and #rawContent > 0 and not rawContent:find("404: Not Found") then
+            local execOk, execErr = pcall(function()
+                local func = assert(loadstring(rawContent))
+                func()
+            end)
+            
+            if execOk then
+                Status.Text = 'Estado: <font color="#50ff78">' .. name .. ' Ejecutado ✅</font>'
+            else
+                Status.Text = 'Estado: <font color="#ff5050">Error al ejecutar</font>'
+                warn("Error de ejecucion:", execErr)
+            end
+        else
+            Status.Text = 'Estado: <font color="#ff5050">URL no válida o 404 ❌</font>'
+        end
+    end)
+end
+
+-- ENLACES
+MirandaBtn.MouseButton1Click:Connect(function()
+    LoadScript("https://raw.githubusercontent.com/miirandahub/loader/refs/heads/main/stealeggies", "Miranda Hub")
+end)
+
+LennonBtn.MouseButton1Click:Connect(function()
+    LoadScript("https://raw.githubusercontent.com/lennonxscripts/lennonhubv4/refs/heads/main/stealanegg", "Lennon v4")
+end
